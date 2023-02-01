@@ -1,7 +1,5 @@
 package org.springboot.domain.posts;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
@@ -13,14 +11,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PostRepositoryTest {
+public class PostsRepositoryTest {
 
     @Autowired
-    PostRepository postRepository;
+    PostsRepository postsRepository;
 
     @After
     public void cleanup(){
-        postRepository.deleteAll();
+        postsRepository.deleteAll();
     }
 
 
@@ -30,14 +28,14 @@ public class PostRepositoryTest {
         String title = "테스트 게시글";
         String content = "테스트 본문";
 
-        postRepository.save(Posts.builder().
+        postsRepository.save(Posts.builder().
             title(title).
             content(content).
             author("khyojun1104@gmail.com").
             build());
 
         //when
-        List<Posts> all = postRepository.findAll();
+        List<Posts> all = postsRepository.findAll();
 
         //then
 
