@@ -107,4 +107,26 @@ public class PostsApiControllerTest {
 
     }
 
+    @Test
+    public void Posts_삭제(){
+        //given
+        Posts savedPosts = postsRepository.save(Posts.builder().
+            title("title").
+            content("content").
+            author("author").
+            build()
+        );
+
+        Long deletedId = savedPosts.getId();
+        String url = "http://localhost:"+ port + "/api/v1/posts/" + deletedId;
+
+        //when
+        restTemplate.delete(url);
+
+        //then
+
+        List<Posts> all = postsRepository.findAll();
+        Assertions.assertThat(all.size()).isEqualTo(0);
+    }
+
 }
