@@ -124,7 +124,6 @@ public class PostsApiControllerTest {
         restTemplate.delete(url);
 
         //then
-
         List<Posts> all = postsRepository.findAll();
         Assertions.assertThat(all.size()).isEqualTo(0);
     }
