@@ -1,6 +1,5 @@
 package org.springboot.domain.user;
 
-import javax.management.relation.Role;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

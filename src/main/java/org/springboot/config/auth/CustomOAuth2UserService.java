@@ -3,6 +3,8 @@ package org.springboot.config.auth;
 import java.util.Collections;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springboot.config.auth.dto.OAuthAttributes;
+import org.springboot.config.auth.dto.SessionUser;
 import org.springboot.domain.user.User;
 import org.springboot.domain.user.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
