@@ -15,6 +15,7 @@
 
 생긴 오류는 다음과 같이 생겼다.
 
+
 ![](데몬오류.png)
 
 ??!
@@ -32,6 +33,9 @@
 위 세 개의 명령어를 순서대로 입력하면 스왑 메모리가 생성된다. 이렇게 해주면 스왑 메모리가 2GB 잡혀서 메모리 부족으로 빌드가 멈추는 현상은 사라지지만, 디스크는 RAM 보다 훨씬 속도가 느리기 때문에 서비스에 퍼포먼스 문제가 발생할 수 있다고 한다. 그래서 이 방법은 임시방편으로 쓰고 사양을 올려야 한다.
 
 이것을 통해서 cs가 왜 중요한지 다시금 깨닫게 되었다.
+
+### 출처
+- https://progdev.tistory.com/26
 
 
 
@@ -61,5 +65,54 @@
 - https://github.com/jojoldu/freelec-springboot2-webservice/issues/308
 
 
+
+
+## yum 에서는 java11 이 적용이 안된다??!!!
+
+> yum? : RPM 기반의 시스템을 위한 자동 업데이터 겸 패키지 설치/제거 도구
+
+
+그래서 실행하게 되면 다음과 같은 오류를 확인할 수 있다.
+
+`has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0`
+
+**위 말을 간단히 해석하자면 코드는 11번으로 실행을 해야되는데 여기 putty에는 8버전밖에 없다고 한다.**
+
+그리고 aws에서는 그래서 corretto 11 이라고 자바 11을 진행할 수 있도록 도와준다. 설치 방법은 아래의 여기를 참고하자.
+
+
+yum에는 설치가능한 JDK가 1.8까지만 존재하기 때문에 JDK 11을 설치하기 위해선 다른 방법을 이용해야합니다.
+Amazon에서 제공하는 OpenJDK인 Amazon Coretto를 다운받아 간편하게 설치할 수 있습니다.
+yum list java*jdk-devel # 설치 가능한 jdk 확인
+> - java-1.6.0-openjdk-devel.x86_64                                       1:1.6.0.41-1.13.13.1.77.amzn1                                       amzn-main
+> - java-1.7.0-openjdk-devel.x86_64                                       1:1.7.0.261-2.6.22.1.83.amzn1                                       amzn-updates
+> - java-1.8.0-openjdk-devel.x86_64                                       1:1.8.0.252.b09-2.51.amzn1                                          amzn-updates
+
+### JDK 설치
+ aws coreetto 다운로드
+
+`sudo curl -L https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.rpm -o jdk11.rpm`
+
+###  jdk11 설치
+`sudo yum localinstall jdk11.rpm`
+
+### jdk version 선택
+`sudo /usr/sbin/alternatives --config java`
+
+### java 버전 확인
+`java --version`
+
+### 다운받은 설치키트 제거
+`rm -rf jdk11.rpm`
+
+### 이전 버전 제거하기
+`yum list installed | grep "java"` yum 설치 리스트 확인
+> - java-1.8.0-openjdk-headless.x86_64    1:1.8.0.222.b10-0.47.amzn1   @amzn-updates
+> -  java-11-amazon-corretto-devel.x86_64  1:11.0.7.10-1                installed
+
+`sudo yum remove java-1.8.0-openjdk-headless.x86_64`
+
 ### 출처
-- https://progdev.tistory.com/26
+- https://pompitzz.github.io/blog/Java/awsEc2InstallJDK11.html#jdk-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5
+
+
