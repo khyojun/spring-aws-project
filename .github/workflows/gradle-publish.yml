@@ -5,6 +5,16 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
+
+#새로 추가된 내용(11)
+
+
+env:
+  S3_BUCKET_NAME: khyojun
+  PROJECT_NAME: spring-aws-project
+
+
+
 name: deploy # (0) GitHub Action에서 보여질 이름을 지정합니다. 
 
 on:
@@ -15,13 +25,13 @@ on:
   workflow_dispatch: # (3) 수동으로도 실행이 가능힙니다.
 
 
+
 jobs:
   build: 
     runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
     permissions: 
-      contents: read 
-      packages: write
-
+        id-token: write
+        contents: read  
     steps:
     - name: Checkout 
       uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.    
@@ -52,3 +62,19 @@ jobs:
     - name: Show Current Time
       run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # (10)
       shell: bash
+      
+    - name: Make zip file
+      run: zip -r ./$PROJECT_NAME.zip .              # (12)
+      shell: bash
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@master      #(13)
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip 
+    
+
