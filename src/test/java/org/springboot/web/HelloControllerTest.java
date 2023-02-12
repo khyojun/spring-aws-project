@@ -8,14 +8,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springboot.config.auth.SecurityConfig;
+import org.springboot.web.HelloController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = HelloController.class)
+@WebMvcTest(controllers = HelloController.class,
+    excludeFilters = {
+    @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+    }
+)
 public class HelloControllerTest {
 
     @Autowired
@@ -23,6 +32,7 @@ public class HelloControllerTest {
 
 
     @Test
+    @WithMockUser(roles="USER")
     public void hello_리턴() throws Exception {
         String hello = "hello";
         mvc.perform(get("/hello")).
@@ -31,6 +41,7 @@ public class HelloControllerTest {
     }
 
     @Test
+    @WithMockUser(roles="USER")
     public void responseDto_테스트() throws Exception {
         String name="hello";
         int amount=10000;
@@ -43,6 +54,8 @@ public class HelloControllerTest {
         // 레퍼런스 참고 : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/test/web/servlet/result/JsonPathResultMatchers.html
         // 언젠지는 모르지만 is로 확인하지 않고 value로 확인해서 resultMatcher를 이용하여서 하는 방식으로 전환됨.
     }
+
+
 
 
 }
