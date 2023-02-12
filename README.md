@@ -33,5 +33,22 @@
 
 이것을 통해서 cs가 왜 중요한지 다시금 깨닫게 되었다.
 
+
+
+## 배포시 S3 랑 Github Action 사용
+
+- Travis CI 를 사용하려고 했는데 결제 방식이 조금 달라져서 바로 진행이 안되서 github Action으로 진행
+- 계속 빌드하다가 Could not load credentials from any providers 문제 발생
+  - 위 문제 발생시 확인해야 할 것!
+    - permission의 권한을 줬는지 : https://github.com/aws-actions/configure-aws-credentials/issues/271
+  - aws key 에 대한 설정을 repository secret에서 잘 했는지 꼭 확인하기!
+
+
+
+### 출처(아래 링크를 참고하면서 진행)
+- https://github.com/jojoldu/freelec-springboot2-webservice/issues/806
+
+
+
 ### 출처
 - https://progdev.tistory.com/26
