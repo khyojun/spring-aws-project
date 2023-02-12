@@ -24,12 +24,14 @@ on:
   workflow_dispatch: # (3) 수동으로도 실행이 가능힙니다.
 
 
+permissions: 
+    id-token: write
+    contents: write 
+
 jobs:
   build: 
     runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
-    permissions: 
-      id-token: write
-      contents: read 
+   
 
     steps:
     - name: Checkout 
