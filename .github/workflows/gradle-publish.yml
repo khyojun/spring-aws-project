@@ -25,13 +25,11 @@ on:
 
 
 jobs:
-
   build: 
     runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
     permissions: 
       id-token: write
       contents: read 
-      packages: write
 
     steps:
     - name: Checkout 
@@ -69,7 +67,7 @@ jobs:
       shell: bash
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@master      #(13)
+      uses: aws-actions/configure-aws-credentials@v1      #(13)
       with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
