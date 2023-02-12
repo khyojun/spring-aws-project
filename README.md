@@ -50,5 +50,16 @@
 
 
 
+## CodeDeploy 관련 에이전트 설치시 
+
+책에 있는 명령어를 사용하면 안 됨 그래서
+`wget https://aws-codedeploy-ap-northeast-2.s3.ap-northeast-2.amazonaws.com/latest/install`
+
+해당 명령어를 사용해야함.
+
+### 출처 
+- https://github.com/jojoldu/freelec-springboot2-webservice/issues/308
+
+
 ### 출처
 - https://progdev.tistory.com/26
