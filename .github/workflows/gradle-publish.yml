@@ -11,10 +11,7 @@
 env:
   S3_BUCKET_NAME: khyojun
   PROJECT_NAME: spring-aws-project
-  
-permissions:
-  id-token: write
-  contents: read
+
 
 
 name: deploy # (0) GitHub Action에서 보여질 이름을 지정합니다. 
@@ -28,9 +25,11 @@ on:
 
 
 jobs:
+
   build: 
     runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
     permissions: 
+      id-token: write
       contents: read 
       packages: write
 
