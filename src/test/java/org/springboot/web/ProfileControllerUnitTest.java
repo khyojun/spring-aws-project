@@ -3,6 +3,7 @@ package org.springboot.web;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.mock.env.MockEnvironment;
 
 public class ProfileControllerUnitTest {
@@ -23,6 +24,25 @@ public class ProfileControllerUnitTest {
 
         //then
         Assertions.assertThat(profile).isEqualTo(expectedProfile);
+    }
+
+    @Test
+    public void real_profile이_없으면_첫_번째가_조회된다(){
+        //given
+        String expectedProfile = "oauth";
+        MockEnvironment env = new MockEnvironment();
+
+        env.addActiveProfile(expectedProfile);
+        env.addActiveProfile("real-db");
+
+        ProfileController controller = new ProfileController(env);
+
+        //when
+        String profile = controller.profile();
+
+        //then
+        Assertions.assertThat(profile).isEqualTo(expectedProfile);
+
     }
 
 
