@@ -1,13 +1,18 @@
-# 진행하면서 생겼던 오류
+## 스프링 부트와 AWS로 혼자 구현하는 웹 서비스를 진행하면서 생겼던 오류 및 해결방안
+
+
 
 ### 로컬, 서버에서 웹 페이지 실행 시 사용자명 오류
 - {userName} : 윈도우의 환경변수
 - {user} : ec2에서 ec2-user라는 값만 나오게 됨.
 
 
-## 해결책
+### 해결책
 
 - userName, user라는 이름으로 안 만들고 다른 이름으로 해서 사용자 이름을 표시하는게 좋다.
+
+
+---
 
 ### putty 실행시 일어났었던 오류
 
@@ -37,7 +42,7 @@
 ### 출처
 - https://progdev.tistory.com/26
 
-
+---
 
 ## 배포시 S3 랑 Github Action 사용
 
@@ -52,7 +57,7 @@
 ### 출처(아래 링크를 참고하면서 진행)
 - https://github.com/jojoldu/freelec-springboot2-webservice/issues/806
 
-
+---
 
 ## CodeDeploy 관련 에이전트 설치시 
 
@@ -65,7 +70,7 @@
 ### 출처 
 - https://github.com/jojoldu/freelec-springboot2-webservice/issues/308
 
-
+---
 
 
 ## yum 에서는 java11 이 적용이 안된다??!!!
@@ -116,4 +121,89 @@ yum list java*jdk-devel # 설치 가능한 jdk 확인
 ### 출처
 - https://pompitzz.github.io/blog/Java/awsEc2InstallJDK11.html#jdk-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5
 
+---
 
+
+![](nginx.png)
+
+## 이 화면이 뜰 때만 해도 금방 끝날 거라고 생각했었죠.....
+
+
+
+## Nginx
+
+우선 발생한 오류와 해결방법을 말하기 전에 이 친구에 대해서 먼저 말하고 갈려고 한다. 왜냐하면 오류를 해결하는데 이 친구가 어떤 역할을 하는지에 대해서 이해가 된 이후에서야 점차 오류에 대한 이해가 되었기 때문이다.
+
+### Nginx에 대해 알아보기 전...
+
+위 같은 것을 사용하는 시발점이 어디서부터였을까?
+
+책의 챕터의 제목과 같이 무중단 배포를 하기 위해서이다.
+
+예를 들면 이런 상황인거다.
+- 웹 서비스를 하고 있는데 만약 패치를 해야하는 상황이 찾아온다면? 원래라면 그냥 서비스를 잠깐 정지시키고 해야한다.
+- 웹 서비스에서 치명적인 문제가 발생했는데 서버를 정지시켜야 할 경우 -> 롤백조차 어려울 수도 있다고 한다.(ㅠㅠㅠㅠ)
+
+그래서 서비스를 정지시키지 않고, 무중단 배포라는것을 하게 된 것이다.
+
+책에서 그래서 Nginx라는 도구를 사용한다.
+> Nginx는 경량 웹 서버입니다.
+클라이언트로부터 요청을 받았을 때 요청에 맞는 정적 파일을 응답해주는 HTTP Web Server로 활용되기도 하고,
+`Reverse Proxy Server`로 활용하여 WAS 서버의 부하를 줄일 수 있는 로드 밸런서로 활용되기도 합니다.
+
+
+이 기능 중 주로 리버스 프록시 서버로서 활용을 하고 사용을 한다.
+>리버스 프록시 : 외부의 요청을 받아 백엔드 서버로 요청을 전달하는 행위이다.
+
+client -> nginx -> server 이런식으로 요청을 받는거다. 그런데 이것을 유지하기 위한 ec2가 더 필요한게 아니라 이제 우리가 서버 운영을 할 때 **하나의 nginx 한 대와 스프링 부트 Jar 2개를 사용하는 거다.**
+
+
+![](nginxwork.png)
+https://jojoldu.tistory.com/267?category=635883
+
+
+그래서 계속 동작하게 할 건데 평소엔 8081포트로 보내주고 있다가 새로 배포하는 것을 8082포트에 올리고 갈아끼워주는 형식으로 계속 동작하는것이라고 이해했다!
+
+
+
+## 그래서 설정하다가 일어난 문제들
+
+### 1. 쉘 스크립트 관련 오류들
+
+쉘 스크립트가 아직 익숙하지 않다보니 책을 보며 스크립트를 따라 적고 있었는데 오류가 일어났었다. 물론 친절한 intellij처럼 알려주지 않았지만 error로그를 남겨줘서 하나 하나 찾으며 수정했었다.
+- 오류 발견하는 방법 [오류 발견 관련 글 참고](https://my-first-programming.tistory.com/entry/nginx-%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%98%A4%EB%A5%98)
+  - `sudo nginx -t`를 사용하여 nginx 시작시 어떤 오류들이 뜨게 되는지 알 수 있다. 
+- 실제 가장 많이 발생했던 오류 [가장 많이 발견된 글](https://velog.io/@jhkang1517/Trouble-Shooting-Error-unary-operator-expected
+  )
+  - 항상 쉘 스크립트 타이핑을 할 때에는 조~~심해서 꼭 하자.
+
+
+### 2. nginx에서 포트를 switch 하는 과정
+
+- /etc/nginx/conf.d/service-url.inc 라는 것을 건드려서 프록시 설정을 해줘야하는데...
+  - 그 안에 
+  - ``` shell
+    include /etc/nginx/conf.d/service-url.inc'
+    
+    location / {
+     proxy_pass $service_url;
+     proxy_set_header X-Real-IP $remote_addr;
+     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header Host $http_host;
+    
+    }
+    
+- 위 구문을 사용하는데 잘 아주 잘 작성을 해야한다. 원래는 위에 include문이 하나 더 있는데 그걸 안 지우고 진행했다가 ... 가리키는 곳이 겹쳐서 port번호를 바꿔줘야 할 때 바꿔주지 않는 일이 있었다.
+    
+
+
+### 3. putty에는 nginx를 깔겠다고 바로 sudo yum install nginx 하면 설치 하지 않는다.
+
+- 제목 그대로 설치를 안하고 putty에서 다른 추천 명령어를 던져주는데 그것을 설치하면 된다.
+  - `nginx is available in Amazon Linux Extra topic "nginx1" To use, run  sudo amazon-linux-extras install nginx1`
+  - 이런 멘트가 나오는데 `sudo amazon-linux-extras install nginx1` 이 친구를 깔면 된다. 
+  - 왜 이렇게 됬냐 했더니 설치한 OS가 AMI인 경우 위 명령어로 nginx를 깔아줘야 한다고 한다.
+    - AMI? : Amazon Machine Image(AMI)는 인스턴스를 시작하는 데 필요한 정보를 제공하는 AWS에서 지원되고 유지 관리되는 이미지입니다.
+
+
+이렇게 3 가지를 작성했지만 가장 인상깊었던 것은  `쉘 스크립트 사용할때 진짜 진짜 잘 주의깊게 사용하자는 거였다.`
